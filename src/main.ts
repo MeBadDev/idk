@@ -9,14 +9,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `
 
 // Animation logic
-const framePad = (n: number) => n.toString().padStart(4, '0');
-const frameBase = '/frames/out';
-const frameExt = '.jpg.txt';
 const frameDelay = 1000 / 60; // ~16.67 ms per frame for 60fps
 
-
 const asciiEl = document.getElementById('ascii-animation')!;
-let frames: (string|null)[] = [];
+let frames: string[] = [];
 
 // Dynamically set font size to fit the animation to the screen
 function setFontSizeAndFit(frame: string) {
@@ -31,25 +27,27 @@ function setFontSizeAndFit(frame: string) {
   asciiEl.style.height = rows + 'em';
 }
 
-function loadFrame(idx: number): Promise<string> {
-  return fetch(`${frameBase}${framePad(idx)}${frameExt}`)
-    .then(r => r.ok ? r.text() : '')
-    .catch(() => '');
+
+async function loadFramesJson(): Promise<string[]> {
+  const res = await fetch('/frames/frames.json');
+  if (!res.ok) throw new Error('Could not load frames.json');
+  return await res.json();
 }
 
+
 async function showAnimation() {
-  let idx = 1;
+  if (!frames.length) {
+    frames = await loadFramesJson();
+  }
+  let idx = 0;
   while (true) {
-    const frame = frames[idx - 1] ?? await loadFrame(idx);
-    if (!frame) break;
-    frames[idx - 1] = frame;
-  asciiEl.textContent = frame;
-  setFontSizeAndFit(frame);
+    const frame = frames[idx % frames.length];
+    asciiEl.textContent = frame;
+    setFontSizeAndFit(frame);
     await new Promise(res => setTimeout(res, frameDelay));
     idx++;
   }
 }
-
 
 // Re-apply font size on window resize
 window.addEventListener('resize', () => {
