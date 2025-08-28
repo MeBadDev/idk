@@ -12,7 +12,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 const framePad = (n: number) => n.toString().padStart(4, '0');
 const frameBase = '/frames/out';
 const frameExt = '.jpg.txt';
-const frameDelay = 25; // ms per frame
+const frameDelay = 1000 / 60; // ~16.67 ms per frame for 60fps
 
 
 const asciiEl = document.getElementById('ascii-animation')!;
