@@ -9,7 +9,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `
 
 // Animation logic
-const frameDelay = 1000 / 60; // ~16.67 ms per frame for 60fps
+const frameDelay = 1000 / 30 // 30 FPS
 
 const asciiEl = document.getElementById('ascii-animation')!;
 let frames: string[] = [];
